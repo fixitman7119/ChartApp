@@ -1,13 +1,21 @@
+using CsvHelper;
+using System.Globalization;
+
 namespace ChartApp
 {
     public partial class ChartApp : Form
     {
         private string _filePath = "";
         private string _rawFile = "";
-        private List<string> _lines =new List<string>();
+        private List<WeatherEvent> _events = new List<WeatherEvent>();
         public ChartApp()
         {
             InitializeComponent();
+        }
+
+        private void LoadData()
+        {
+
         }
 
         private void btnOpenFile_Click(object sender, EventArgs e)
@@ -27,21 +35,21 @@ namespace ChartApp
 
                     var fileStream = openFileDialog.OpenFile();
 
-                    using(StreamReader reader = new StreamReader(fileStream))
+                    using (StreamReader reader = new StreamReader(fileStream))
+                    using (var csv = new CsvReader(
+                        reader, CultureInfo.InvariantCulture))
                     {
-                        _rawFile = reader.ReadToEnd();
-                        
-                        while(reader.Peek() >= 0)
-                        {
-                            _lines.Add(reader.ReadLine());
-                        }
+                        _events = csv.GetRecords<WeatherEvent>().ToList();
                     }
-                    // MessageBox.Show(_filePath);
+
+
+
                 }
-               
+
+
+
             }
 
         }
-
     }
 }
