@@ -60,6 +60,7 @@
             Controls.Add(btnOpenFile);
             Name = "ChartApp";
             Text = "ChartApp";
+            Paint += ChartApp_Paint;
             ResumeLayout(false);
             PerformLayout();
         }

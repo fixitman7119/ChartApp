@@ -1,6 +1,8 @@
 using CsvHelper;
+using System.Drawing;
 using System.Drawing.Text;
 using System.Globalization;
+using System.Security.Cryptography.Pkcs;
 
 namespace ChartApp
 {
@@ -12,6 +14,7 @@ namespace ChartApp
         public ChartApp()
         {
             InitializeComponent();
+
         }
 
         private void LoadData()
@@ -19,13 +22,13 @@ namespace ChartApp
             // loads the data in the lable to display
             lblDisplay.Text = "";
 
-            for(int i = 0; i < _events.Count;i++)
+            for (int i = 0; i < _events.Count; i++)
             {
                 lblDisplay.Text += _events[i].ToString() + "\n";
 
             }
 
-            DrawGraph();
+
         }
 
         private void DrawGraph()
@@ -37,16 +40,46 @@ namespace ChartApp
             Pen blackPen = new Pen(blackBrush);
             Graphics g = this.CreateGraphics();
 
-            int startX = 100;
+            int startX = 150;
             int startY = 10;
             int sizeX = 300;
             int sizeY = 300;
 
 
             Point topLeft = new Point(startX, startY);
-            Point bottomRight = new Point(startX + sizeX, startY +sizeY);
+            Point topRight = new Point(startX + sizeX, startY );
+            Point bottomRight = new Point(startX + sizeX, startY + sizeY);
+            Point bottomLeft = new Point(startX, startY + sizeY);
 
-            g.DrawLine(blackPen, topLeft, bottomRight);
+            // draw graph boundrys
+            g.DrawLine(blackPen, topLeft, bottomLeft);
+            g.DrawLine(blackPen, bottomLeft, bottomRight);
+
+            // draw x hashes
+            int xStep = 10;
+
+            // draw y hashes
+            int numHashY = 10;
+            int yStep = (sizeY - startY) / numHashY;
+
+            int tempStep =(150 - 50) / numHashY ;
+
+           
+
+            // draw vertical hash marks
+            for(int i =0; i<10; i++)
+            {
+                Point pt1 = new Point(startX,startY+ (yStep *i));
+                Point pt2 = new Point(startX -10, startY + (yStep * i));
+
+                Point textPt = new Point(startX - 40, startY + (yStep * i));
+
+                string label = (150 -(tempStep * i)) .ToString();
+
+                g.DrawLine(blackPen, pt1, pt2);
+                g.DrawString(label, new Font(FontFamily.GenericMonospace, 10.0f), blackBrush, textPt );
+            }
+           
         }
 
         private void btnOpenFile_Click(object sender, EventArgs e)
@@ -82,6 +115,13 @@ namespace ChartApp
 
             }
 
+        }
+        
+     
+
+        private void ChartApp_Paint(object sender, PaintEventArgs e)
+        {
+            DrawGraph();
         }
     }
 }
